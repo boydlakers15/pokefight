@@ -7,32 +7,24 @@ exports.getAllPokemon = (req, res) => {
 exports.getSinglePokemon = (req, res) => {
   const id = parseInt(req.params.id);
   const pokemon = pokemonData.find(p => p.id === id);
-  if (pokemon) {
-    res.json(pokemon);
+  if (!pokemon) {
+    res.status(404).send('Pokemon not found');
   } else {
-    res.status(404).json({ message: 'Pokemon not found' });
+    res.json(pokemon);
   }
 };
 
-exports.getSinglePokemonInfo = (req, res) => {
+exports.getPokemonInfo = (req, res) => {
   const id = parseInt(req.params.id);
-  const info = req.params.info.toLowerCase();
   const pokemon = pokemonData.find(p => p.id === id);
-  if (pokemon) {
-    switch (info) {
-      case 'name':
-        res.json({ name: pokemon.name });
-        break;
-      case 'type':
-        res.json({ type: pokemon.type });
-        break;
-      case 'base':
-        res.json({ base: pokemon.base });
-        break;
-      default:
-        res.status(400).json({ message: 'Invalid information requested' });
-    }
+  if (!pokemon) {
+    res.status(404).send('Pokemon not found');
   } else {
-    res.status(404).json({ message: 'Pokemon not found' });
+    const info = req.params.info;
+    if (!(info in pokemon)) {
+      res.status(400).send('Invalid information requested');
+    } else {
+      res.json(pokemon[info]);
+    }
   }
 };
