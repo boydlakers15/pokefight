@@ -4,7 +4,8 @@
   "description": "��#\u0000 \u0000p\u0000o\u0000k\u0000e\u0000f\u0000i\u0000g\u0000h\u0000t\u0000\r\u0000 \u0000",
   "main": "server.js",
   "scripts": {
-    "dev": "node --watch --watch-preserve-output server"
+    "dev": "node --watch --watch-preserve-output server",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
