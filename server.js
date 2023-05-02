@@ -1,21 +1,68 @@
 const express = require('express');
 const cors = require('cors');
-const pokemonData = require('./pokedex.json');
+const leaderboardRouter = require('./leaderboardRouter');
+const saveRouter = require('./saveRouter');
+const bodyParser = require('body-parser');
+const { getAllPokemon } = require('./controllers/pokemonController');
+const Game = require('./modules/game');
 
+require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: '*'
+}));
+
+app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.get('/pokemon', getAllPokemon);
+
+app.use('/', leaderboardRouter);
+app.use('/', saveRouter);
 
 
 
-// GET route to get the complete list of pokemon
-app.get('/pokemon', (req, res) => {
-  res.json(pokemonData);
+app.post('/save', (req, res) => {
+  const newGame = new Game({
+    playerPokemon: 'Charizard',
+    opponentPokemon: 'Volcanion',
+    winner: 'Volcanion',
+    turns: 5
+  });
+
+  newGame.save()
+    .then(() => {
+      res.send('Game saved to database');
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error saving game to database');
+    })
 });
 
-// GET route to get a single pokemon by id
+app.get('/save', async (req, res) => {
+  try {
+    const games = await Game.find({});
+    res.json(games);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error retrieving games from database');
+  }
+});
+
+app.delete('/save', async (req, res) => {
+  try {
+    const filter = { winner: "Infernape" };
+    const result = await Game.deleteMany(filter);
+    res.send(`${result.deletedCount} games deleted`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error deleting games from database');
+  }
+});
+
 app.get('/pokemon/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const pokemon = pokemonData.find(p => p.id === id);
@@ -26,7 +73,6 @@ app.get('/pokemon/:id', (req, res) => {
   }
 });
 
-// GET route to get a single pokemon info by id and info
 app.get('/pokemon/:id/:info', (req, res) => {
   const id = parseInt(req.params.id);
   const pokemon = pokemonData.find(p => p.id === id);
@@ -42,5 +88,10 @@ app.get('/pokemon/:id/:info', (req, res) => {
   }
 });
 
-// start the server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+async function startServer() {
+  await app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+startServer();

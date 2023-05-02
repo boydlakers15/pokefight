@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "��#\u0000 \u0000p\u0000o\u0000k\u0000e\u0000f\u0000i\u0000g\u0000h\u0000t\u0000\r\u0000 \u0000",
   "main": "server.js",
-  "proxy": "http://192.168.178.56:3001",
   "scripts": {
     "dev": "node --watch --watch-preserve-output server"
   },
@@ -19,10 +18,11 @@
   },
   "homepage": "https://github.com/boydlakers15/pokefight#readme",
   "dependencies": {
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "heroku-cli": "^6.16.13",
-    "mongoose": "^7.0.5",
+    "mongoose": "^7.1.0",
     "nodemon": "^2.0.22",
     "npm": "^9.6.5"
   }
