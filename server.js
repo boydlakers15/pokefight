@@ -9,7 +9,7 @@ const Game = require('./modules/game');
 require('./db');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 app.use(cors({
   origin: '*'
@@ -17,12 +17,11 @@ app.use(cors({
 
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.get('/pokemon', getAllPokemon);
 
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
 
-
+app.get('/pokemon', getAllPokemon);
 
 app.post('/save', (req, res) => {
   const newGame = new Game({
@@ -54,8 +53,7 @@ app.get('/save', async (req, res) => {
 
 app.delete('/save', async (req, res) => {
   try {
-    const filter = { winner: "Infernape" };
-    const result = await Game.deleteMany(filter);
+    const result = await Game.deleteOne({ name: "Bob" });
     res.send(`${result.deletedCount} games deleted`);
   } catch (error) {
     console.error(error);
@@ -63,35 +61,41 @@ app.delete('/save', async (req, res) => {
   }
 });
 
-app.get('/pokemon/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const pokemon = pokemonData.find(p => p.id === id);
-  if (!pokemon) {
-    res.status(404).send('Pokemon not found');
-  } else {
-    res.json(pokemon);
-  }
-});
+fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json')
+  .then(response => response.json())
+  .then(pokemonData => {
 
-app.get('/pokemon/:id/:info', (req, res) => {
-  const id = parseInt(req.params.id);
-  const pokemon = pokemonData.find(p => p.id === id);
-  if (!pokemon) {
-    res.status(404).send('Pokemon not found');
-  } else {
-    const info = req.params.info;
-    if (!(info in pokemon)) {
-      res.status(400).send('Invalid information requested');
-    } else {
-      res.json(pokemon[info]);
-    }
-  }
-});
+    app.get('/pokemon', (req, res) => {
+      res.json(pokemonData);
+    });
 
-async function startServer() {
-  await app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    app.get('/pokemon/:id', (req, res) => {
+      const id = parseInt(req.params.id);
+      const pokemon = pokemonData.find(p => p.id === id);
+      if (!pokemon) {
+        res.status(404).send('Pokemon not found');
+      } else {
+        res.json(pokemon);
+      }
+    });
+
+    app.get('/pokemon/:id/:info', (req, res) => {
+      const id = parseInt(req.params.id);
+      const pokemon = pokemonData.find(p => p.id === id);
+      if (!pokemon) {
+        res.status(404).send('Pokemon not found');
+      } else {
+        const info = req.params.info;
+        if (!(info in pokemon)) {
+          res.status(400).send('Invalid information requested');
+        } else {
+          res.json(pokemon[info]);
+        }
+      }
+    });
+
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch(error => {
+    console.log(error);
   });
-}
-
-startServer();

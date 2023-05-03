@@ -1,42 +1,37 @@
-// const express = require('express');
-// const Student = require('./modules/game');
-
-// const leaderboardRouter = express.Router();
-
-// leaderboardRouter.get('/comp/leaderboard', async (req, res) => {
-//   try {
-//     const games = await Student.find().sort('-createdAt').limit(10);
-//     res.status(200).json(games);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Error retrieving games' });
-//   }
-// });
-
-// module.exports = leaderboardRouter;
 const express = require('express');
+const Game = require('./modules/game');
 const router = express.Router();
-const pool = require('./db');
 
+// Handle POST requests to the '/save' endpoint
+router.post('/save', async (req, res) => {
+  const { playerPokemon, opponentPokemon, winner, date } = req.body;
+
+  try {
+    const game = new Game({
+      playerPokemon,
+      opponentPokemon,
+      winner,
+      createdAt: date,
+    });
+    const savedGame = await game.save();
+    res.status(201).json(savedGame);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to save game' });
+  }
+});
+
+// Handle GET requests to the '/leaderboard' endpoint
 router.get('/leaderboard', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM leaderboard ORDER BY score DESC');
-    res.json(rows);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error retrieving leaderboard from database');
+    const games = await Game.find({}).sort({ createdAt: -1 }).limit(10);
+    res.json(games);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to retrieve games', error: err.message });
   }
 });
 
-router.post('/leaderboard', async (req, res) => {
-  const { name, score } = req.body;
-  try {
-    await pool.query('INSERT INTO leaderboard (name, score) VALUES ($1, $2)', [name, score]);
-    res.send('Score added to leaderboard');
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error adding score to leaderboard');
-  }
-});
+
 
 module.exports = router;

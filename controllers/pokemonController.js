@@ -1,19 +1,18 @@
-const axios = require('axios');
+const fetch = require('node-fetch');
 
-async function getAllPokemon(req, res) {
+const getAllPokemon = async (req, res) => {
   try {
-    const response = await axios.get('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json');
-    const pokemonData = response.data;
+    const response = await fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json');
+    const pokemonData = await response.json();
     res.json(pokemonData);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error retrieving pokemon' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Error retrieving pokemon data');
   }
-}
+};
 
-module.exports = {
-  getAllPokemon
-}
+module.exports = { getAllPokemon };
+
 // const fs = require('fs');
 // const path = require('path');
 
