@@ -1,38 +1,32 @@
-const pokemonData = require('../pokedex.json');
+const fetch = require('node-fetch');
 
-exports.getAllPokemon = (req, res) => {
-  res.json(pokemonData);
-};
-
-exports.getSinglePokemon = (req, res) => {
-  const id = parseInt(req.params.id);
-  const pokemon = pokemonData.find(p => p.id === id);
-  if (pokemon) {
-    res.json(pokemon);
-  } else {
-    res.status(404).json({ message: 'Pokemon not found' });
+const getAllPokemon = async (req, res) => {
+  try {
+    const response = await fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json');
+    const pokemonData = await response.json();
+    res.json(pokemonData);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Error retrieving pokemon data');
   }
 };
 
-exports.getSinglePokemonInfo = (req, res) => {
-  const id = parseInt(req.params.id);
-  const info = req.params.info.toLowerCase();
-  const pokemon = pokemonData.find(p => p.id === id);
-  if (pokemon) {
-    switch (info) {
-      case 'name':
-        res.json({ name: pokemon.name });
-        break;
-      case 'type':
-        res.json({ type: pokemon.type });
-        break;
-      case 'base':
-        res.json({ base: pokemon.base });
-        break;
-      default:
-        res.status(400).json({ message: 'Invalid information requested' });
-    }
-  } else {
-    res.status(404).json({ message: 'Pokemon not found' });
-  }
-};
+module.exports = { getAllPokemon };
+
+// const fs = require('fs');
+// const path = require('path');
+
+// function getAllPokemon(req, res) {
+//   try {
+//     const filePath = path.join(__dirname, 'pokedex.json');
+//     const pokemonData = JSON.parse(fs.readFileSync(filePath));
+//     res.json(pokemonData);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Error retrieving pokemon' });
+//   }
+// }
+
+// module.exports = {
+//   getAllPokemon
+// }
