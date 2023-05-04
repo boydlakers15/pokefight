@@ -24,12 +24,8 @@ app.use('/', saveRouter);
 app.get('/pokemon', getAllPokemon);
 
 app.post('/save', (req, res) => {
-  const newGame = new Game({
-    playerPokemon: 'Charizard',
-    opponentPokemon: 'Volcanion',
-    winner: 'Volcanion',
-    turns: 5
-  });
+  const gameData = req.body;
+  const newGame = new Game(gameData);
 
   newGame.save()
     .then(() => {
