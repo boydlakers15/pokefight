@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const Game = require('./modules/game');
 const router = express.Router();
 require('./db');
