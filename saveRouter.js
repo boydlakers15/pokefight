@@ -1,20 +1,6 @@
 const express = require('express');
-const cors = require('cors');
 const Game = require('./modules/game');
 const router = express.Router();
-require('./db');
-
-module.exports = function(app) {
-  app.use('/save', createProxyMiddleware({ target: 'http://localhost:4000' }));
-};
-
-
-
-app.use(cors({
-  origin: 'https://pokemon-backend.herokuapp.com/'
-}));
-
-
 
 // Handle POST requests to the '/save' endpoint
 router.post('/save', (req, res) => {
