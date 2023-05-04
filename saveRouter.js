@@ -3,7 +3,7 @@ const Game = require('./modules/game');
 const router = express.Router();
 
 // Handle POST requests to the '/save' endpoint
-router.post('https://pokemon-backend.herokuapp.com/save', async (req, res) => {
+router.post('/save', async (req, res) => {
   const { playerPokemon, opponentPokemon, winner, date } = req.body;
 
   try {
