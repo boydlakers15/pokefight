@@ -41,7 +41,7 @@ app.post('/save', (req, res) => {
     })
 });
 
-app.get('/save', async (req, res) => {
+app.get('/game/save', async (req, res) => {
   try {
     const games = await Game.find({});
     res.json(games);
@@ -51,7 +51,7 @@ app.get('/save', async (req, res) => {
   }
 });
 
-app.delete('/save', async (req, res) => {
+app.delete('/game/save', async (req, res) => {
   try {
     const result = await Game.deleteOne({ name: "Bob" });
     res.send(`${result.deletedCount} games deleted`);

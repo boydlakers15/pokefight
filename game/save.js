@@ -3,7 +3,7 @@ const Game = require('./modules/game');
 const router = express.Router();
 
 // Handle POST requests to the '/save' endpoint
-router.post('/save', async (req, res) => {
+router.post('/game/save', async (req, res) => {
   const { playerPokemon, opponentPokemon, winner, date } = req.body;
 
   try {

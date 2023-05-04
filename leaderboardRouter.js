@@ -3,7 +3,7 @@ const Game = require('./modules/game');
 const router = express.Router();
 
 // Handle POST requests to the '/save' endpoint
-router.post('/save', async (req, res) => {
+router.post('/game/save', async (req, res) => {
   const { playerPokemon, opponentPokemon, winner, date } = req.body;
 
   try {
@@ -22,7 +22,7 @@ router.post('/save', async (req, res) => {
 });
 
 // Handle GET requests to the '/leaderboard' endpoint
-router.get('/leaderboard', async (req, res) => {
+router.get('/game/leaderboard', async (req, res) => {
   try {
     const games = await Game.find({}).sort({ createdAt: -1 }).limit(10);
     res.json(games);
