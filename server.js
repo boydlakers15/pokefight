@@ -5,7 +5,6 @@ const saveRouter = require('./saveRouter');
 const bodyParser = require('body-parser');
 const { getAllPokemon } = require('./controllers/pokemonController');
 const Game = require('./modules/game');
-require('dotenv').config();
 require('./db');
 
 const app = express();
