@@ -5,11 +5,6 @@ const saveRouter = require('./saveRouter');
 const bodyParser = require('body-parser');
 const { getAllPokemon } = require('./controllers/pokemonController');
 const Game = require('./modules/game');
-const { createProxyMiddleware } = require('http-proxy-middleware');
-
-module.exports = function(app) {
-  app.use('/save', createProxyMiddleware({ target: 'http://localhost:4000' }));
-};
 
 require('./db');
 
@@ -17,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.use(cors({
-  origin: 'https://pokemon-backend.herokuapp.com/'
+  origin: '*'
 }));
 
 app.use(express.urlencoded({ extended: true }));
