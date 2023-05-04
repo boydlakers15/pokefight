@@ -3,22 +3,22 @@ const Game = require('./modules/game');
 const router = express.Router();
 
 // Handle POST requests to the '/save' endpoint
-router.post('/save', async (req, res) => {
-  const { playerPokemon, opponentPokemon, winner, date } = req.body;
+router.post('/save', (req, res) => {
+  const newGame = new Game({
+    playerPokemon: req.body.playerPokemon,
+    opponentPokemon: req.body.opponentPokemon,
+    winner: req.body.winner,
+    turns: req.body.turns
+  });
 
-  try {
-    const game = new Game({
-      playerPokemon,
-      opponentPokemon,
-      winner,
-      createdAt: date,
-    });
-    const savedGame = await game.save();
-    res.status(201).json(savedGame);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to save game' });
-  }
+  newGame.save()
+    .then(() => {
+      res.send('Game saved to database');
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error saving game to database');
+    })
 });
 
 module.exports = router;
