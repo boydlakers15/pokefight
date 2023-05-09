@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const User = mongoose.Schema;
-const bcrypt = require('bcrypt');
 
 const userSchema = new User({
     _id: { type: mongoose.Types.ObjectId, auto: true },
@@ -17,15 +16,6 @@ const userSchema = new User({
         maxLength: 1024,
     }
 });
-
-userSchema.methods.comparePassword = async function (password) {
-    try {
-        return await bcrypt.compare(password, this.password);
-    } catch (error) {
-        console.log(error);
-        return false;
-    }
-};
 
 userSchema.set('toJSON', {
   transform: function (doc, ret, options) {

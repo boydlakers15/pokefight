@@ -8,12 +8,12 @@ require('./db');
 // Add session middleware
 const session = require('express-session');
 const app = express();
-const User = require('./models/user');
+const User = require('./modules/user');
 const secret = process.env.JWT_SECRET;
 
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors({ origin: '*' }));
 
 // Add session configuration
 const sess = {
