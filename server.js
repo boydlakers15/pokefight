@@ -21,7 +21,7 @@ app.get('/pokemon', getAllPokemon);
 
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: '*' }));
+app.use(cors());
 
 // Add session configuration
 const sess = {
