@@ -3,13 +3,19 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
+const { getAllPokemon } = require('./controllers/pokemonController');
 require('./db');
 
 // Add session middleware
 const session = require('express-session');
 const app = express();
-const {User } = require('./modules/game');
+const { User } = require('./modules/game');
 const secret = process.env.JWT_SECRET;
+app.use('/', leaderboardRouter);
+app.use('/', saveRouter);
+app.use(bodyParser.json());
+app.get('/pokemon', getAllPokemon);
 
 // Middleware
 app.use(express.json());
@@ -156,8 +162,43 @@ app.get('/logout', (req, res) => {
     res.clearCookie('token');
     res.status(200).json({ message: 'Logged out successfully' });
 });
-  
-  
-app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-});
+
+
+fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json')
+  .then(response => response.json())
+  .then(pokemonData => {
+
+    app.get('/pokemon', (req, res) => {
+      res.json(pokemonData);
+    });
+
+    app.get('/pokemon/:id', (req, res) => {
+      const id = parseInt(req.params.id);
+      const pokemon = pokemonData.find(p => p.id === id);
+      if (!pokemon) {
+        res.status(404).send('Pokemon not found');
+      } else {
+        res.json(pokemon);
+      }
+    });
+
+    app.get('/pokemon/:id/:info', (req, res) => {
+      const id = parseInt(req.params.id);
+      const pokemon = pokemonData.find(p => p.id === id);
+      if (!pokemon) {
+        res.status(404).send('Pokemon not found');
+      } else {
+        const info = req.params.info;
+        if (!(info in pokemon)) {
+          res.status(400).send('Invalid information requested');
+        } else {
+          res.json(pokemon[info]);
+        }
+      }
+    });
+
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch(error => {
+    console.log(error);
+  });
