@@ -21,7 +21,12 @@ app.get('/pokemon', getAllPokemon);
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+const corsOptions = {
+  origin: 'https://645a529c4716fc2a9f6f5f18--pokemon-grp-3.netlify.app',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+app.use(cors(corsOptions));
 
 // Add session configuration
 const sess = {
