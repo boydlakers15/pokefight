@@ -14,9 +14,13 @@ require('./db');
 
 // Add session middleware
 const session = require('express-session');
-const User = require('./models/user');
 const saltRounds = 10;
 const secret = process.env.JWT_SECRET;
+
+
+
+const app = express();
+const PORT = process.env.PORT;
 
 // Middleware
 app.use(express.json());
@@ -25,17 +29,13 @@ app.use(cors({ origin: 'http://localhost:5173' }));
 // Add session configuration
 const sess = {
   secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false,
   cookie: {}
 };
 
-// Use session middleware
 app.use(session(sess));
 
-
-mongoose.connect(process.env.MONGODBURI);
-
-const app = express();
-const PORT = process.env.PORT || 4000;
 
 app.use(cors({
   origin: '*'
