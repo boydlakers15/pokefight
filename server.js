@@ -12,7 +12,8 @@ require('./db');
 // Add session middleware
 const session = require('express-session');
 const app = express();
-const { Game, User } = require('./modules/game');
+const {User } = require('./modules/game');
+const { Game } = require('./modules/game');
 const secret = process.env.JWT_SECRET;
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
