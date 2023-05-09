@@ -8,7 +8,7 @@ require('./db');
 // Add session middleware
 const session = require('express-session');
 const app = express();
-const User = require('./models/user');
+const User = require('./modules/game');
 const secret = process.env.JWT_SECRET;
 
 // Middleware
