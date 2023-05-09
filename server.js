@@ -5,6 +5,9 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const { getAllPokemon } = require('./controllers/pokemonController');
+const leaderboardRouter = require('./leaderboardRouter');
+const saveRouter = require('./saveRouter');
+
 require('./db');
 
 // Add session middleware
