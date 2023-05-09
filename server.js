@@ -236,6 +236,12 @@ fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.jso
       }
     });
 
+    app.use(function(req, res, next) {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      next();
+    });
+    
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch(error => {
