@@ -12,8 +12,8 @@ require('./db');
 // Add session middleware
 const session = require('express-session');
 const app = express();
-const {User } = require('./modules/game');
-const { Game } = require('./modules/game');
+const Game = require('./modules/game');
+const User = require('./modules/user');
 const secret = process.env.JWT_SECRET;
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
@@ -24,7 +24,7 @@ app.get('/pokemon', getAllPokemon);
 // Middleware
 app.use(express.json());
 app.use(cors({
-  origin: '*'
+  origin: 'http://localhost:5173/'
 }));
 
 // Add session configuration
@@ -241,7 +241,7 @@ fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.jso
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       next();
     });
-    
+
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch(error => {
