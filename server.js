@@ -17,15 +17,12 @@ const secret = process.env.JWT_SECRET;
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
 app.use(bodyParser.json());
-app.get('/pokemon', cors(corsOptions), getAllPokemon);
+app.get('/pokemon', getAllPokemon);
 
 
 // Middleware
 app.use(express.json());
-const corsOptions = {
-  origin: '*',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
+app.use(cors({ origin: '*' }));
 
 // Add session configuration
 const sess = {
