@@ -17,16 +17,15 @@ const secret = process.env.JWT_SECRET;
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
 app.use(bodyParser.json());
-app.get('/pokemon', getAllPokemon);
+app.get('/pokemon', cors(corsOptions), getAllPokemon);
+
 
 // Middleware
 app.use(express.json());
 const corsOptions = {
-  origin: 'https://645a529c4716fc2a9f6f5f18--pokemon-grp-3.netlify.app',
+  origin: '*',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
-
-app.use(cors(corsOptions));
+};
 
 // Add session configuration
 const sess = {
