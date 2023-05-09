@@ -23,7 +23,7 @@ app.get('/pokemon', getAllPokemon);
 // Middleware
 app.use(express.json());
 app.use(cors({
-  origin: 'https://645a58e947539b2d3a55c8a8--pokemon-grp-3.netlify.app'
+  origin: '*'
 }));
 
 // Add session configuration
