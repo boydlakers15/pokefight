@@ -3,130 +3,45 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 const leaderboardRouter = require('./leaderboardRouter');
 const saveRouter = require('./saveRouter');
-const bodyParser = require('body-parser');
+const userRouter = require('./router/userRoutes');
+const errorHandler = require('./middlewares/errorHandler');
 const { getAllPokemon } = require('./controllers/pokemonController');
+const { Game, User } = require('./modules/game');
 require('./db');
 
-// Add session middleware
-const session = require('express-session');
 const app = express();
+
 // Middleware
 app.use(express.json());
-const corsOptions = {
-  origin: '*'
-};
+app.use(cors({ origin: '*' }));
+app.use(cookieParser());
+app.use(session({ secret: 'keyboard cat', cookie: {} }));
+app.use(bodyParser.json());
 
-app.use(cors(corsOptions));
-// const { User } = require('./modules/user');
-const { Game, User } = require('./modules/game');
-const secret = process.env.JWT_SECRET;
+// Routes
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
-app.use(bodyParser.json());
+app.use('/users', userRouter);
 app.get('/pokemon', getAllPokemon);
 
+// Error handling
+app.use(errorHandler);
 
-
-
-
-
-// Add session configuration
-const sess = {
-  secret: 'keyboard cat',
-  cookie: {}
-};
-
-// Use session middleware
-app.use(session(sess));
+// CORS headers
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://645bc20739669516c7946973--pokemon-grp-3.netlify.app");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Origin', 'https://645bc20739669516c7946973--pokemon-grp-3.netlify.app');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 
-
+const secret = process.env.JWT_SECRET;
 const PORT = process.env.PORT;
 // mongoose.connect(process.env.MONGODBURI);
-
-// GET /users ⇒ return all users
-app.get('/users', async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.status(200).json(users);
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: 'Failed to get users' });
-  }
-});
-
-// GET /users/:id ⇒ return a single user
-app.get('/users/:id', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    res.status(200).json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(404).json({ error: 'User not found' });
-  }
-});
-
-// POST /users ⇒ create a new user
-app.post('/users', async (req, res) => {
-  if (!req.body.username || !req.body.password) {
-    return res.status(400).json({ error: 'Missing username or password' });
-  }
-  try {
-    const newUser = new User({ username: req.body.username, password: req.body.password });
-    const user = await newUser.save();
-    const token = jwt.sign({ id: user._id }, secret);
-    res.cookie('token', token, { httpOnly: true });
-    res.status(201).json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: 'Failed to create user' });
-  }
-});
-
-// PUT /users/:id ⇒ update a specific user
-app.put('/users/:id', async (req, res) => {
-  if (!req.body.username || !req.body.password) {
-    return res.status(400).json({ error: 'Missing username or password' });
-  }
-  try {
-    const user = await User.findByIdAndUpdate(req.params.id, {
-      username: req.body.username,
-      password: req.body.password,
-    });
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    res.status(200).json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(404).json({ error: 'User not found' });
-  }
-});
-
-// DELETE /users/:id ⇒ delete a specific user
-app.delete('/users/:id', async (req, res) => {
-  try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) {
-      return res.continue('/login')
-      .status(404)
-      .json({ error: 'User not found' });
-    }
-    res.status(200).json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(404).json({ error: 'User not found' });
-  }
-});
 
 // POST /login ⇒ login and return
 app.post('/login', async (req, res) => {
@@ -181,45 +96,4 @@ app.get('/logout', (req, res) => {
     res.status(200).json({ message: 'Logged out successfully' });
 });
 
-
-
-fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json')
-  .then(response => response.json())
-  .then(pokemonData => {
-
-    app.get('/pokemon', (req, res) => {
-      res.json(pokemonData);
-    });
-
-    app.get('/pokemon/:id', (req, res) => {
-      const id = parseInt(req.params.id);
-      const pokemon = pokemonData.find(p => p.id === id);
-      if (!pokemon) {
-        res.status(404).send('Pokemon not found');
-      } else {
-        res.json(pokemon);
-      }
-    });
-
-    app.get('/pokemon/:id/:info', (req, res) => {
-      const id = parseInt(req.params.id);
-      const pokemon = pokemonData.find(p => p.id === id);
-      if (!pokemon) {
-        res.status(404).send('Pokemon not found');
-      } else {
-        const info = req.params.info;
-        if (!(info in pokemon)) {
-          res.status(400).send('Invalid information requested');
-        } else {
-          res.json(pokemon[info]);
-        }
-      }
-    });
-
-    
-    
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch(error => {
-    console.log(error);
-  });
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
