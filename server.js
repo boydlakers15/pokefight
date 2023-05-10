@@ -41,7 +41,7 @@ const sess = {
 // Use session middleware
 app.use(session(sess));
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://645bbf93dd0a5514660012d9--pokemon-grp-3.netlify.app");
+  res.header("Access-Control-Allow-Origin", "https://645bc20739669516c7946973--pokemon-grp-3.netlify.app");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
