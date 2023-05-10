@@ -12,6 +12,13 @@ require('./db');
 // Add session middleware
 const session = require('express-session');
 const app = express();
+// Middleware
+app.use(express.json());
+const corsOptions = {
+  origin: /^https?:\/\/(?:[\w-]+\.)?example\.com(?:$|\/)/
+};
+
+app.use(cors(corsOptions));
 // const { User } = require('./modules/user');
 const { Game, User } = require('./modules/game');
 const secret = process.env.JWT_SECRET;
@@ -21,11 +28,8 @@ app.use(bodyParser.json());
 app.get('/pokemon', getAllPokemon);
 
 
-// Middleware
-app.use(express.json());
-app.use(cors({
-  origin: '*'
-}));
+
+
 
 
 // Add session configuration
@@ -36,10 +40,12 @@ const sess = {
 
 // Use session middleware
 app.use(session(sess));
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "https://645ba8e20b62e5005452c72e--pokemon-grp-3.netlify.app");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
 
 const PORT = process.env.PORT;
 // mongoose.connect(process.env.MONGODBURI);
