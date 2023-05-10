@@ -7,7 +7,7 @@ const gameSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-const Game = mongoose.model('Game', gameSchema);
+const Game = mongoose.model('Games', gameSchema);
 
 const userSchema = new mongoose.Schema({
     _id: { type: mongoose.Types.ObjectId, auto: true },
