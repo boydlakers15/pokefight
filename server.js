@@ -139,28 +139,29 @@ app.post('/login', async (req, res) => {
 
 // POST /signup ⇒ create a new user
 app.post('/signup', async (req, res) => {
-    const { username, password } = req.body;
-    
-    try {
-        const existingUser = await User.findOne({ username });
-        if (existingUser) {
-            return res.status(400).send('Username already exists');
-        }
-    
-        const user = await User.create({ username, password });
-        if (!user) {
-            return res.status(500).send('Failed to create user');
-        }
-    
-        const token = jwt.sign({ id: user._id }, secret);
-        req.session.user = user; // Store the user in the session
-        res.cookie('token', token, { httpOnly: true });
-        res.status(201).json(user);
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Internal server error');
+  const { firstName, lastName, email, username, password } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).send('Username already exists');
     }
+
+    const user = await User.create({ firstName, lastName, email, username, password });
+    if (!user) {
+      return res.status(500).send('Failed to create user');
+    }
+
+    const token = jwt.sign({ id: user._id }, secret);
+    req.session.user = user; // Store the user in the session
+    res.cookie('token', token, { httpOnly: true });
+    res.status(201).json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Internal server error');
+  }
 });
+
 
 // GET /logout ⇒ logout and clear JWT cookie
 app.get('/logout', (req, res) => {
