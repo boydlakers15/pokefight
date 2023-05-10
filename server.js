@@ -12,7 +12,7 @@ require('./db');
 // Add session middleware
 const session = require('express-session');
 const app = express();
-const {User } = require('./modules/game');
+const { User } = require('./modules/user');
 const { Game } = require('./modules/game');
 const secret = process.env.JWT_SECRET;
 app.use('/', leaderboardRouter);
@@ -236,6 +236,12 @@ fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.jso
       }
     });
 
+    app.use(function(req, res, next) {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      next();
+    });
+    
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch(error => {
