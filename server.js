@@ -17,27 +17,15 @@ const { Game } = require('./modules/game');
 const secret = process.env.JWT_SECRET;
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
-app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.get('/pokemon', getAllPokemon);
+
 
 // Middleware
 app.use(express.json());
 app.use(cors({
   origin: '*'
 }));
-
-
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
-  if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-    return res.status(200).json({});
-  }
-  next();
-});
 
 // Add session configuration
 const sess = {
@@ -181,46 +169,37 @@ app.get('/logout', (req, res) => {
     res.status(200).json({ message: 'Logged out successfully' });
 });
 
+app.post('/save', (req, res) => {
+  const gameData = req.body;
+  const newGame = new Game(gameData);
 
-
-app.post('/save', async (req, res) => {
-  const { playerPokemon, opponentPokemon, winner, turns } = req.body;
-
-  try {
-    const game = new Game({
-      playerPokemon,
-      opponentPokemon,
-      winner,
-      createdAt: new Date(),
-      turns
-    });
-    const savedGame = await game.save();
-    res.status(201).json(savedGame);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to save game' });
-  }
+  newGame.save()
+    .then(() => {
+      res.send('Game saved to database');
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error saving game to database');
+    })
 });
 
-app.get('/leaderboard', async (req, res) => {
+app.get('/save', async (req, res) => {
   try {
-    const games = await Game.find();
+    const games = await Game.find({});
     res.json(games);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to retrieve games', error: err.message });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error retrieving games from database');
   }
 });
 
-app.delete('/leaderboard/:id', async (req, res) => {
-  const id = parseInt(req.params.id);
-
+app.delete('/save', async (req, res) => {
   try {
-    const result = await Game.delete(id);
-    res.json({ message: `Deleted ${result.rowCount} game(s)` });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to delete game', error: err.message });
+    const result = await Game.deleteOne({ name: "Bob" });
+    res.send(`${result.deletedCount} games deleted`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error deleting games from database');
   }
 });
 
