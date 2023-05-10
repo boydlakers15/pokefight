@@ -205,10 +205,13 @@ fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.jso
     });
 
     app.use(function(req, res, next) {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      res.setHeader('Access-Control-Allow-Origin', 'https://645b945ff766da098a68a28d--pokemon-grp-3.netlify.app');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+      res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+      res.setHeader('Access-Control-Allow-Credentials', true);
       next();
     });
+    
     
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
