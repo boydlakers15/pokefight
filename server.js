@@ -8,7 +8,6 @@ const saveRouter = require('./saveRouter');
 const bodyParser = require('body-parser');
 const { getAllPokemon } = require('./controllers/pokemonController');
 require('./db');
-
 // Add session middleware
 const session = require('express-session');
 const app = express();
@@ -26,25 +25,20 @@ app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
 app.use(bodyParser.json());
 app.get('/pokemon', getAllPokemon);
-
 // Add session configuration
 const sess = {
   secret: 'keyboard cat',
   cookie: {}
 };
-
 // Use session middleware
 app.use(session(sess));
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://645bc20739669516c7946973--pokemon-grp-3.netlify.app");
+  res.header("Access-Control-Allow-Origin", "https://645bbb220b62e50f0752cb83--pokemon-grp-3.netlify.app");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
-
 const PORT = process.env.PORT;
 // mongoose.connect(process.env.MONGODBURI);
-
 // GET /users ⇒ return all users
 app.get('/users', async (req, res) => {
   try {
@@ -55,7 +49,6 @@ app.get('/users', async (req, res) => {
     res.status(400).json({ error: 'Failed to get users' });
   }
 });
-
 // GET /users/:id ⇒ return a single user
 app.get('/users/:id', async (req, res) => {
   try {
@@ -69,7 +62,6 @@ app.get('/users/:id', async (req, res) => {
     res.status(404).json({ error: 'User not found' });
   }
 });
-
 // POST /users ⇒ create a new user
 app.post('/users', async (req, res) => {
   if (!req.body.username || !req.body.password) {
@@ -86,7 +78,6 @@ app.post('/users', async (req, res) => {
     res.status(400).json({ error: 'Failed to create user' });
   }
 });
-
 // PUT /users/:id ⇒ update a specific user
 app.put('/users/:id', async (req, res) => {
   if (!req.body.username || !req.body.password) {
@@ -106,7 +97,6 @@ app.put('/users/:id', async (req, res) => {
     res.status(404).json({ error: 'User not found' });
   }
 });
-
 // DELETE /users/:id ⇒ delete a specific user
 app.delete('/users/:id', async (req, res) => {
   try {
@@ -122,7 +112,6 @@ app.delete('/users/:id', async (req, res) => {
     res.status(404).json({ error: 'User not found' });
   }
 });
-
 // POST /login ⇒ login and return
 app.post('/login', async (req, res) => {
     try {
@@ -142,22 +131,18 @@ app.post('/login', async (req, res) => {
         res.status(401).json({ error: 'Invalid username or password' });
     }
 });
-
 // POST /signup ⇒ create a new user
 app.post('/signup', async (req, res) => {
   const { firstName, lastName, email, username, password } = req.body;
-
   try {
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).send('Username already exists');
     }
-
     const user = await User.create({ firstName, lastName, email, username, password });
     if (!user) {
       return res.status(500).send('Failed to create user');
     }
-
     const token = jwt.sign({ id: user._id }, secret);
     req.session.user = user; // Store the user in the session
     res.cookie('token', token, { httpOnly: true });
@@ -167,25 +152,18 @@ app.post('/signup', async (req, res) => {
     res.status(500).send('Internal server error');
   }
 });
-
-
 // GET /logout ⇒ logout and clear JWT cookie
 app.get('/logout', (req, res) => {
     req.session.destroy(); // Destroy the session
     res.clearCookie('token');
     res.status(200).json({ message: 'Logged out successfully' });
 });
-
-
-
 fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json')
   .then(response => response.json())
   .then(pokemonData => {
-
     app.get('/pokemon', (req, res) => {
       res.json(pokemonData);
     });
-
     app.get('/pokemon/:id', (req, res) => {
       const id = parseInt(req.params.id);
       const pokemon = pokemonData.find(p => p.id === id);
@@ -195,7 +173,6 @@ fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.jso
         res.json(pokemon);
       }
     });
-
     app.get('/pokemon/:id/:info', (req, res) => {
       const id = parseInt(req.params.id);
       const pokemon = pokemonData.find(p => p.id === id);
@@ -210,7 +187,6 @@ fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.jso
         }
       }
     });
-
     
     
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
