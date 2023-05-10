@@ -6,8 +6,8 @@ const gameSchema = new mongoose.Schema({
   winner: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
-
-module.exports = mongoose.model('Game', gameSchema);
+const Game = mongoose.model('Game', gameSchema);
+module.exports = Game;
 
 
 // const userSchema = new mongoose.Schema({
