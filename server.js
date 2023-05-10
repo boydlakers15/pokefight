@@ -37,7 +37,7 @@ const sess = {
 app.use(session(sess));
 
 const PORT = process.env.PORT;
-mongoose.connect(process.env.MONGODBURI);
+// mongoose.connect(process.env.MONGODBURI);
 
 // GET /users ⇒ return all users
 app.get('/users', async (req, res) => {
