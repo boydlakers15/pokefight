@@ -12,8 +12,8 @@ require('./db');
 // Add session middleware
 const session = require('express-session');
 const app = express();
-const { User } = require('./modules/user');
-const { Game } = require('./modules/game');
+// const { User } = require('./modules/user');
+const { Game, User } = require('./modules/game');
 const secret = process.env.JWT_SECRET;
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
@@ -169,39 +169,7 @@ app.get('/logout', (req, res) => {
     res.status(200).json({ message: 'Logged out successfully' });
 });
 
-app.post('/save', (req, res) => {
-  const gameData = req.body;
-  const newGame = new Game(gameData);
 
-  newGame.save()
-    .then(() => {
-      res.send('Game saved to database');
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send('Error saving game to database');
-    })
-});
-
-app.get('/save', async (req, res) => {
-  try {
-    const games = await Game.find({});
-    res.json(games);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error retrieving games from database');
-  }
-});
-
-app.delete('/save', async (req, res) => {
-  try {
-    const result = await Game.deleteOne({ name: "Bob" });
-    res.send(`${result.deletedCount} games deleted`);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error deleting games from database');
-  }
-});
 
 fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json')
   .then(response => response.json())
