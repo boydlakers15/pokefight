@@ -27,11 +27,6 @@ app.use('/', saveRouter);
 app.use(bodyParser.json());
 app.get('/pokemon', getAllPokemon);
 
-
-
-
-
-
 // Add session configuration
 const sess = {
   secret: 'keyboard cat',
@@ -40,7 +35,7 @@ const sess = {
 
 // Use session middleware
 app.use(session(sess));
-app.use((req, res, next) => {
+app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "https://645bc20739669516c7946973--pokemon-grp-3.netlify.app");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
