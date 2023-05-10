@@ -14,7 +14,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 const corsOptions = {
-  origin: 'https://645be821fbc26904c7f19d51--pokemon-grp-3.netlify.app'
+  origin: 'https://645be9276e7ec40608521646--pokemon-grp-3.netlify.app'
 };
 
 app.use(cors(corsOptions));
@@ -33,7 +33,7 @@ const sess = {
 // Use session middleware
 app.use(session(sess));
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://645be821fbc26904c7f19d51--pokemon-grp-3.netlify.app");
+  res.header("Access-Control-Allow-Origin", "https://645be9276e7ec40608521646--pokemon-grp-3.netlify.app");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
