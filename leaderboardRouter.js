@@ -1,5 +1,6 @@
 const express = require('express');
-const Game = require('./modules/game');
+const { Game, User } = require('./modules/game');
+
 const router = express.Router();
 
 // Handle POST requests to the '/save' endpoint
