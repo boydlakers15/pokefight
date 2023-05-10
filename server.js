@@ -12,8 +12,8 @@ require('./db');
 // Add session middleware
 const session = require('express-session');
 const app = express();
-const Game = require('./modules/game');
-const User = require('./modules/user');
+const {User } = require('./modules/game');
+const { Game } = require('./modules/game');
 const secret = process.env.JWT_SECRET;
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
@@ -23,8 +23,9 @@ app.get('/pokemon', getAllPokemon);
 
 // Middleware
 app.use(express.json());
-app.use(cors());
-
+app.use(cors({
+  origin: '*'
+}));
 
 // Add session configuration
 const sess = {
@@ -36,8 +37,7 @@ const sess = {
 app.use(session(sess));
 
 const PORT = process.env.PORT;
-// mongoose.connect(process.env.MONGODBURI);
-
+mongoose.connect(process.env.MONGODBURI);
 
 // GET /users ⇒ return all users
 app.get('/users', async (req, res) => {
@@ -139,27 +139,27 @@ app.post('/login', async (req, res) => {
 
 // POST /signup ⇒ create a new user
 app.post('/signup', async (req, res) => {
-  const { firstName, lastName, email, username, password } = req.body;
-
-  try {
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).send('Username already exists');
+    const { username, password } = req.body;
+    
+    try {
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).send('Username already exists');
+        }
+    
+        const user = await User.create({ username, password });
+        if (!user) {
+            return res.status(500).send('Failed to create user');
+        }
+    
+        const token = jwt.sign({ id: user._id }, secret);
+        req.session.user = user; // Store the user in the session
+        res.cookie('token', token, { httpOnly: true });
+        res.status(201).json(user);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal server error');
     }
-
-    const user = await User.create({ firstName, lastName, email, username, password });
-    if (!user) {
-      return res.status(500).send('Failed to create user');
-    }
-
-    const token = jwt.sign({ id: user._id }, secret);
-    req.session.user = user; // Store the user in the session
-    res.cookie('token', token, { httpOnly: true });
-    res.status(201).json(user);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send('Internal server error');
-  }
 });
 
 // GET /logout ⇒ logout and clear JWT cookie
@@ -203,13 +203,6 @@ app.delete('/save', async (req, res) => {
   }
 });
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
-
-
 fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json')
   .then(response => response.json())
   .then(pokemonData => {
@@ -242,8 +235,6 @@ fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.jso
         }
       }
     });
-
-    
 
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
