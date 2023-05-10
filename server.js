@@ -14,12 +14,13 @@ const app = express();
 // Middleware
 app.use(express.json());
 const corsOptions = {
-  origin: 'https://645bf13e312e7d0d7ef50ba9--pokemon-grp-3.netlify.app'
+  origin: 'https://645bf4b11936a0105a07e614--pokemon-grp-3.netlify.app'
 };
 
 app.use(cors(corsOptions));
 // const { User } = require('./modules/user');
-const { Game, User } = require('./modules/game');
+const { Game } = require('./modules/game');
+const {User} = require('./modules/user');
 const secret = process.env.JWT_SECRET;
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
@@ -33,7 +34,7 @@ const sess = {
 // Use session middleware
 app.use(session(sess));
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://645bf13e312e7d0d7ef50ba9--pokemon-grp-3.netlify.app");
+  res.header("Access-Control-Allow-Origin", "https://645bf4b11936a0105a07e614--pokemon-grp-3.netlify.app");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
