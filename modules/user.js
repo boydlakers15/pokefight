@@ -13,7 +13,20 @@ const userSchema = new mongoose.Schema({
         required: true,
         minLength: 6,
         maxLength: 1024,
-    }
+    },
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
 });
 
 userSchema.set('toJSON', {
