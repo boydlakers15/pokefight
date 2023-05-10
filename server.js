@@ -27,6 +27,7 @@ app.use(cors({
   origin: '*'
 }));
 
+
 // Add session configuration
 const sess = {
   secret: 'keyboard cat',
@@ -35,6 +36,10 @@ const sess = {
 
 // Use session middleware
 app.use(session(sess));
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 
 const PORT = process.env.PORT;
 // mongoose.connect(process.env.MONGODBURI);
