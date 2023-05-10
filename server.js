@@ -14,7 +14,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 const corsOptions = {
-  origin: 'https://645bdca8dd0a552f85001b95--pokemon-grp-3.netlify.app'
+  origin: 'https://645be821fbc26904c7f19d51--pokemon-grp-3.netlify.app'
 };
 
 app.use(cors(corsOptions));
