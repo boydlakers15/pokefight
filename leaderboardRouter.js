@@ -24,7 +24,7 @@ router.post('/save', async (req, res) => {
 // Handle GET requests to the '/leaderboard' endpoint
 router.get('/leaderboard', async (req, res) => {
   try {
-    const games = await Leaderboard.find({});
+    const games = await Game.find({}).sort({ createdAt: -1 }).limit(10);
     res.json(games);
   } catch (err) {
     console.error(err);
