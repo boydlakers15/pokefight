@@ -19,8 +19,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 // const { User } = require('./modules/user');
-const { Game } = require('./modules/game');
-const {User} = require('./modules/user');
+const Game = require('./modules/game');
+const User = require('./modules/user');
 const secret = process.env.JWT_SECRET;
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
