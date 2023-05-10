@@ -1,6 +1,5 @@
 const express = require('express');
-const { Game, User } = require('./modules/game');
-
+const Game = require('./modules/game');
 const router = express.Router();
 
 // Handle POST requests to the '/save' endpoint
@@ -25,14 +24,12 @@ router.post('/save', async (req, res) => {
 // Handle GET requests to the '/leaderboard' endpoint
 router.get('/leaderboard', async (req, res) => {
   try {
-    const games = await Game.find({}).sort({ createdAt: -1 }).limit(10);
+    const games = await Leaderboard.find();
     res.json(games);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Failed to retrieve games', error: err.message });
+    res.status(500).json({ message: 'Failed to retrieve games' });
   }
 });
-
-
 
 module.exports = router;
