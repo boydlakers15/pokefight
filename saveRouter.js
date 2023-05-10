@@ -21,4 +21,38 @@ router.post('/save', async (req, res) => {
   }
 });
 
+app.post('/save', (req, res) => {
+  const gameData = req.body;
+  const newGame = new Game(gameData);
+
+  newGame.save()
+    .then(() => {
+      res.send('Game saved to database');
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error saving game to database');
+    })
+});
+
+app.get('/save', async (req, res) => {
+  try {
+    const games = await Game.find({});
+    res.json(games);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error retrieving games from database');
+  }
+});
+
+app.delete('/save', async (req, res) => {
+  try {
+    const result = await Game.deleteOne({ name: "Bob" });
+    res.send(`${result.deletedCount} games deleted`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error deleting games from database');
+  }
+});
+
 module.exports = router;
