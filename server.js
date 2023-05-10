@@ -3,43 +3,50 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
 const leaderboardRouter = require('./leaderboardRouter');
 const saveRouter = require('./saveRouter');
-const userRouter = require('./router/userRoutes');
-const errorHandler = require('./middlewares/errorHandler');
+const bodyParser = require('body-parser');
 const { getAllPokemon } = require('./controllers/pokemonController');
-const { Game, User } = require('./modules/game');
 require('./db');
 
+// Add session middleware
+const session = require('express-session');
 const app = express();
-
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: '*' }));
-app.use(cookieParser());
-app.use(session({ secret: 'keyboard cat', cookie: {} }));
-app.use(bodyParser.json());
+const corsOptions = {
+  origin: '*'
+};
 
-// Routes
+app.use(cors(corsOptions));
+// const { User } = require('./modules/user');
+const { Game, User } = require('./modules/game');
+const secret = process.env.JWT_SECRET;
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
-app.use('/users', userRouter);
+app.use(bodyParser.json());
 app.get('/pokemon', getAllPokemon);
 
-// Error handling
-app.use(errorHandler);
 
-// CORS headers
+
+
+
+
+// Add session configuration
+const sess = {
+  secret: 'keyboard cat',
+  cookie: {}
+};
+
+// Use session middleware
+app.use(session(sess));
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://645bc20739669516c7946973--pokemon-grp-3.netlify.app');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header("Access-Control-Allow-Origin", "https://645bc20739669516c7946973--pokemon-grp-3.netlify.app");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 
-const secret = process.env.JWT_SECRET;
+
 const PORT = process.env.PORT;
 // mongoose.connect(process.env.MONGODBURI);
 
@@ -174,4 +181,45 @@ app.get('/logout', (req, res) => {
     res.status(200).json({ message: 'Logged out successfully' });
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json')
+  .then(response => response.json())
+  .then(pokemonData => {
+
+    app.get('/pokemon', (req, res) => {
+      res.json(pokemonData);
+    });
+
+    app.get('/pokemon/:id', (req, res) => {
+      const id = parseInt(req.params.id);
+      const pokemon = pokemonData.find(p => p.id === id);
+      if (!pokemon) {
+        res.status(404).send('Pokemon not found');
+      } else {
+        res.json(pokemon);
+      }
+    });
+
+    app.get('/pokemon/:id/:info', (req, res) => {
+      const id = parseInt(req.params.id);
+      const pokemon = pokemonData.find(p => p.id === id);
+      if (!pokemon) {
+        res.status(404).send('Pokemon not found');
+      } else {
+        const info = req.params.info;
+        if (!(info in pokemon)) {
+          res.status(400).send('Invalid information requested');
+        } else {
+          res.json(pokemon[info]);
+        }
+      }
+    });
+
+    
+    
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch(error => {
+    console.log(error);
+  });
