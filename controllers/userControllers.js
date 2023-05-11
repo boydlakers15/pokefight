@@ -40,6 +40,7 @@ const createUser = async (req, res, next) => {
     const hash = await bcrypt.hash(password, 10);
 
     const { _id } = await UserCollection.create({
+      username,
       firstName,
       lastName,
       email,
