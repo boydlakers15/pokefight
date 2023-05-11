@@ -22,7 +22,7 @@ app.use(
     credentials: true,
     origin: [
       'http://localhost:5173',
-      /https:\/\/645c977dfee4d567a8bbf524--pokemon-grp-3\.netlify\.app/,
+      'https://645c977dfee4d567a8bbf524--pokemon-grp-3.netlify.app',
     ],
   })
 );
