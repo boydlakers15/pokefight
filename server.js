@@ -3,6 +3,7 @@ const express = require('express');
 // const mongoose = require('mongoose');
 const cors = require('cors');
 // const jwt = require('jsonwebtoken');
+const errorHandler = require('./middlewares/errorHandler');
 const leaderboardRouter = require('./leaderboardRouter');
 const saveRouter = require('./saveRouter');
 const bodyParser = require('body-parser');
