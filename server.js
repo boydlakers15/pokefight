@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const leaderboardRouter = require('./leaderboardRouter');
 const saveRouter = require('./saveRouter');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const userRouter = require('./router/userRoutes');
 const { getAllPokemon } = require('./controllers/pokemonController');
 require('./db');
 // Add session middleware
@@ -24,7 +26,9 @@ const User = require('./modules/user');
 const secret = process.env.JWT_SECRET;
 app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
+app.use('/users', userRouter);
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.get('/pokemon', getAllPokemon);
 // Add session configuration
 const sess = {
