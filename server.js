@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const userRouter = require('./router/userRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 const { getAllPokemon } = require('./controllers/pokemonController');
+const mongoose = require('mongoose');
 const PORT = process.env.PORT;
 require('./db');
 
@@ -48,7 +49,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-// mongoose.connect(process.env.MONGODBURI);
+mongoose.connect(process.env.MONGODBURI);
 
 // Error handling
 app.use(errorHandler);
