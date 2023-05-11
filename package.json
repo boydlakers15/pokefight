@@ -18,7 +18,7 @@
     "url": "https://github.com/boydlakers15/pokefight/issues"
   },
   "engines": {
-    "node": "14.x"
+    "node": "18.x"
   },
   "homepage": "https://github.com/boydlakers15/pokefight#readme",
   "dependencies": {
