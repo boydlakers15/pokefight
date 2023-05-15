@@ -47,7 +47,7 @@ const sess = {
 app.use(session(sess));
 
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://645c977dfee4d567a8bbf524--pokemon-grp-3.netlify.app");
+  res.header("Access-Control-Allow-Origin", "https://646202de35d6d50ab5f8da67--pokemon-grp-3.netlify.app");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
