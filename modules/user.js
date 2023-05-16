@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
   _id: { type: mongoose.Types.ObjectId, auto: true },
-  username: {
+  userName: {
     type: String,
     required: true,
     minLength: 3,
@@ -13,7 +13,8 @@ const userSchema = new mongoose.Schema({
     required: true,
     minLength: 6,
     maxLength: 1024,
-  },
+    select: false,
+  },  
   firstName: {
     type: String,
     required: true,
@@ -27,6 +28,11 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  
 });
 
 userSchema.set('toJSON', {

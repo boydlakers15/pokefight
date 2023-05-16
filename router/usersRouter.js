@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const User = require('./modules/user');
+const User = require('../models/userSchema');
 
 const router = express.Router();
 const secret = process.env.JWT_SECRET;
@@ -32,11 +32,18 @@ router.get('/:id', async (req, res) => {
 
 // POST /users ⇒ create a new user
 router.post('/', async (req, res) => {
-  if (!req.body.username || !req.body.password) {
+  if (!req.body.userName || !req.body.password) {
     return res.status(400).json({ error: 'Missing username or password' });
   }
   try {
-    const newUser = new User({ username: req.body.username, password: req.body.password });
+    const newUser = new User({
+      userName: req.body.userName,
+      password: req.body.password,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      isAdmin: req.body.isAdmin || false,
+    });
     const user = await newUser.save();
     const token = jwt.sign({ id: user._id }, secret);
     res.cookie('token', token, { httpOnly: true });
@@ -49,13 +56,17 @@ router.post('/', async (req, res) => {
 
 // PUT /users/:id ⇒ update a specific user
 router.put('/:id', async (req, res) => {
-  if (!req.body.username || !req.body.password) {
+  if (!req.body.userName || !req.body.password) {
     return res.status(400).json({ error: 'Missing username or password' });
   }
   try {
     const user = await User.findByIdAndUpdate(req.params.id, {
-      username: req.body.username,
+      userName: req.body.userName,
       password: req.body.password,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      isAdmin: req.body.isAdmin || false,
     });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });

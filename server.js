@@ -13,11 +13,14 @@ const session = require('express-session');
 const app = express();
 // Middleware
 app.use(express.json());
-const corsOptions = {
-  origin: '*'
-};
-
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    credentials: true,
+    origin: [
+      'http://localhost:5173',
+    ],
+  })
+);
 const User  = require('./modules/user');
 
 const secret = process.env.JWT_SECRET;
@@ -33,7 +36,7 @@ const sess = {
 // Use session middleware
 app.use(session(sess));
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
@@ -49,6 +52,7 @@ app.get('/users', async (req, res) => {
     res.status(400).json({ error: 'Failed to get users' });
   }
 });
+
 // GET /users/:id ⇒ return a single user
 app.get('/users/:id', async (req, res) => {
   try {
@@ -62,13 +66,21 @@ app.get('/users/:id', async (req, res) => {
     res.status(404).json({ error: 'User not found' });
   }
 });
+
 // POST /users ⇒ create a new user
 app.post('/users', async (req, res) => {
-  if (!req.body.username || !req.body.password) {
+  if (!req.body.userName || !req.body.password) {
     return res.status(400).json({ error: 'Missing username or password' });
   }
   try {
-    const newUser = new User({ username: req.body.username, password: req.body.password });
+    const newUser = new User({
+      userName: req.body.userName,
+      password: req.body.password,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      isAdmin: req.body.isAdmin || false,
+    });
     const user = await newUser.save();
     const token = jwt.sign({ id: user._id }, secret);
     res.cookie('token', token, { httpOnly: true });
@@ -78,15 +90,20 @@ app.post('/users', async (req, res) => {
     res.status(400).json({ error: 'Failed to create user' });
   }
 });
+
 // PUT /users/:id ⇒ update a specific user
 app.put('/users/:id', async (req, res) => {
-  if (!req.body.username || !req.body.password) {
+  if (!req.body.userName || !req.body.password) {
     return res.status(400).json({ error: 'Missing username or password' });
   }
   try {
     const user = await User.findByIdAndUpdate(req.params.id, {
-      username: req.body.username,
+      userName: req.body.userName,
       password: req.body.password,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      isAdmin: req.body.isAdmin || false,
     });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -97,14 +114,13 @@ app.put('/users/:id', async (req, res) => {
     res.status(404).json({ error: 'User not found' });
   }
 });
+
 // DELETE /users/:id ⇒ delete a specific user
 app.delete('/users/:id', async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
-      return res.continue('/login')
-      .status(404)
-      .json({ error: 'User not found' });
+      return res.continue('/login').status(404).json({ error: 'User not found' });
     }
     res.status(200).json(user);
   } catch (error) {
@@ -115,7 +131,7 @@ app.delete('/users/:id', async (req, res) => {
 // POST /login ⇒ login and return
 app.post('/login', async (req, res) => {
     try {
-        const user = await User.findOne({ username: req.body.username });
+        const user = await User.findOne({ userName: req.body.userName });
         if (!user) {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
@@ -133,13 +149,13 @@ app.post('/login', async (req, res) => {
 });
 // POST /signup ⇒ create a new user
 app.post('/signup', async (req, res) => {
-  const { firstName, lastName, email, username, password } = req.body;
+  const { firstName, lastName, email, userName, password } = req.body;
   try {
-    const existingUser = await User.findOne({ username });
+    const existingUser = await User.findOne({ userName });
     if (existingUser) {
       return res.status(400).send('Username already exists');
     }
-    const user = await User.create({ firstName, lastName, email, username, password });
+    const user = await User.create({ firstName, lastName, email, userName, password });
     if (!user) {
       return res.status(500).send('Failed to create user');
     }
