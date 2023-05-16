@@ -130,23 +130,25 @@ app.delete('/users/:id', async (req, res) => {
 });
 // POST /login ⇒ login and return
 app.post('/login', async (req, res) => {
-    try {
-        const user = await User.findOne({ userName: req.body.userName });
-        if (!user) {
-            return res.status(401).json({ error: 'Invalid username or password' });
-        }
-        if (user.password !== req.body.password) {
-            return res.status(401).json({ error: 'Invalid username or password' });
-        }
-        const token = jwt.sign({ id: user._id }, secret);
-        req.session.user = user; // Store the user in the session
-        res.cookie('token', token, { httpOnly: true });
-        res.status(200).json({ message: 'Logged in successfully', token });
-    } catch (error) {
-        console.error(error);
-        res.status(401).json({ error: 'Invalid username or password' });
-    }
+  try {
+      const { userName, email, password } = req.body;
+      const user = await User.findOne({ $or: [{ userName }, { email }] });
+      if (!user) {
+          return res.status(401).json({ error: 'Invalid username or password' });
+      }
+      if (user.password !== password) {
+          return res.status(401).json({ error: 'Invalid username or password' });
+      }
+      const token = jwt.sign({ id: user._id }, secret);
+      req.session.user = user; // Store the user in the session
+      res.cookie('token', token, { httpOnly: true });
+      res.status(200).json({ message: 'Logged in successfully', token });
+  } catch (error) {
+      console.error(error);
+      res.status(401).json({ error: 'Invalid username or password' });
+  }
 });
+
 // POST /signup ⇒ create a new user
 app.post('/signup', async (req, res) => {
   const { firstName, lastName, email, userName, password } = req.body;
