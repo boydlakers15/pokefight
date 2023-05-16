@@ -134,9 +134,8 @@ app.post('/login', async (req, res) => {
           return res.status(401).json({ error: 'Invalid username or password' });
       }
       const token = jwt.sign({ id: user._id }, secret);
-      req.session.user = user; // Store the user in the session
       res.cookie('token', token, { httpOnly: true });
-      res.status(200).json({ message: 'Logged in successfully', token });
+      res.status(200).json({ message: 'Logged in successfully'});
   } catch (error) {
       console.error(error);
       res.status(401).json({ error: 'Invalid username or password' });
