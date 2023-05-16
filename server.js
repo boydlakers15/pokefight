@@ -126,8 +126,7 @@ app.delete('/users/:id', async (req, res) => {
 app.post('/login', async (req, res) => {
   try {
       const { userName, email, password } = req.body;
-      const user = await User.findOne({ $or: [{ userName }, { email }] });
-      console.log(user);
+      const user = await User.findOne({ $or: [{ userName }, { email }] }).select('+password');
       if (!user) {
           return res.status(401).json({ error: 'Invalid username or password' });
       }
