@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 const { getAllPokemon } = require('./controllers/pokemonController');
 require('./db');
 // Add session middleware
-const session = require('express-session');
+
 const app = express();
 // Middleware
 app.use(express.json());
@@ -28,13 +28,7 @@ app.use('/', leaderboardRouter);
 app.use('/', saveRouter);
 app.use(bodyParser.json());
 app.get('/pokemon', getAllPokemon);
-// Add session configuration
-const sess = {
-  secret: 'keyboard cat',
-  cookie: {}
-};
-// Use session middleware
-app.use(session(sess));
+
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:5173");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
