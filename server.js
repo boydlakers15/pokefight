@@ -35,7 +35,7 @@ app.use(function(req, res, next) {
   next();
 });
 const PORT = process.env.PORT;
-// mongoose.connect(process.env.MONGODBURI);
+//mongoose.connect(process.env.MONGODBURI);
 // GET /users ⇒ return all users
 app.get('/users', async (req, res) => {
   try {
@@ -127,6 +127,7 @@ app.post('/login', async (req, res) => {
   try {
       const { userName, email, password } = req.body;
       const user = await User.findOne({ $or: [{ userName }, { email }] });
+      console.log(user);
       if (!user) {
           return res.status(401).json({ error: 'Invalid username or password' });
       }
